@@ -1,0 +1,88 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class GameManager : MonoBehaviour
+{
+    public List<Circle> circles;
+    public LineRenderer lineRenderer;
+    public Button restartButton;
+
+    private void Start()
+    {
+        circles = new List<Circle>();
+        for (int i = 0; i < 5; i++)
+        {
+            circles.Add(new Circle());
+        }
+
+        lineRenderer = GetComponent<LineRenderer>();
+        lineRenderer.positionCount = 2;
+
+        restartButton.onClick.AddListener(Restart);
+    }
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            lineRenderer.SetPosition(0, Input.mousePosition);
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            lineRenderer.SetPosition(1, Input.mousePosition);
+            RemoveIntersectingCircles();
+        }
+    }
+
+    private void RemoveIntersectingCircles()
+    {
+        foreach (Circle circle in circles)
+        {
+            if (lineRenderer.GetBounds().Intersects(circle.bounds))
+            {
+                circle.enabled = false;
+            }
+        }
+    }
+
+    public void Restart()
+    {
+        for (Circle circle in circles)
+        {
+            circle.enabled = true;
+        }
+
+        lineRenderer.positionCount = 2;
+    }
+}
+
+public class Circle : MonoBehaviour
+{
+    public float radius = 50;
+
+    private void OnEnable()
+    {
+        GetComponent<Renderer>().material.color = Random.ColorHSV(0, 1, 1);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawCircle(transform.position, radius);
+    }
+}
+
+This code first imports the necessary libraries, then creates a GameManager script. The GameManager script contains the following functions:
+
+Start(): This function is called when the game starts. It spawns 5 random Circles and sets up the LineRenderer.
+Update(): This function is called every frame. It checks if the mouse button is down and if so, it adds a new point to the LineRenderer. When the mouse button is released, it removes any Circles that the LineRenderer intersects.
+RemoveIntersectingCircles(): This function removes any Circles that the LineRenderer intersects.
+Restart(): This function restarts the game by enabling all Circles and resetting the LineRenderer.
+The Circle script contains the following functions:
+
+OnEnable(): This function is called when the Circle is enabled. It sets the Circle's color to a random HSV color.
+OnDrawGizmos(): This function is called when the Gizmos are drawn. It draws a circle around the Circle's position.
+The code then creates a Circle prefab and instantiates 5 of them. It also creates a GameManager script and attaches it to the GameManager GameObject. Finally, it adds a Restart button to the scene and binds it to the Restart() function in the GameManager script.
+
+S
