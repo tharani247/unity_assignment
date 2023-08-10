@@ -1,0 +1,60 @@
+##Python Code
+
+import requests
+import json
+import TweenMax
+
+API_URL = "https://qa2.sunbasedata.com/sunbase/portal/api/assignment.jsp?cmd=client_data"
+
+def get_clients():
+    response = requests.get(API_URL)
+
+    if response.status_code == 200:
+        json_data = json.loads(response.content)
+        return json_data["clients"]
+    else:
+        print("Error getting JSON data from API.")
+        return []
+
+def show_client_details(client_id):
+    client = get_clients()[client_id]
+
+    document.getElementById("client-name").innerHTML = client.name
+    document.getElementById("client-points").innerHTML = client.points
+    document.getElementById("client-address").innerHTML = client.address
+
+    TweenMax.to("#client-popup", 1, {
+        y: 0,
+        delay: 1,
+        easing: Expo.easeOut
+    });
+
+def on_click_client(event):
+    client_id = event.target.getAttribute("data-client-id")
+    show_client_details(client_id)
+
+def main():
+    clients = get_clients()
+
+    document.getElementById("clients").innerHTML = ""
+
+    for client in clients:
+        li = document.createElement("li")
+        li.innerHTML = "<a href="#" data-client-id=\"{{ client.id }}\"> {{ client.name }} ({{ client.points }}) </a>"
+        document.getElementById("clients").appendChild(li)
+
+    document.getElementById("filter").addEventListener("change", on_change_filter)
+    document.getElementById("clients").addEventListener("click", on_click_client)
+
+if __name__ == "__main__":
+    main()
+
+Explaination:
+
+This code imports the necessary libraries, then defines the following functions:
+
+get_clients(): This function calls the API and gets the JSON data for the clients.
+show_client_details(): This function displays the client's details in a popup window.
+on_click_client(): This function is called when a user clicks on a client in the list. It gets the client ID from the event and displays the client's details in a popup window.
+main(): This function is the main function. It gets the clients from the API, creates the UI, and binds the event handlers.
+The code then calls the main() function to start the application
